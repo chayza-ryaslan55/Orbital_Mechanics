@@ -16,8 +16,13 @@ A Cartesian state vector contains six components:
 $$
 \mathbf{X} =
 \begin{bmatrix}
-x & y & z & v_x & v_y & v_z
-\end{bmatrix}^{T}
+x \\
+y \\
+z \\
+v_x \\
+v_y \\
+v_z
+\end{bmatrix}
 $$
 Where:
 
