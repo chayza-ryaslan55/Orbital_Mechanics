@@ -1,7 +1,6 @@
+
 import numpy as np
 import matplotlib.pyplot as plt
-
-plt.style.use('dark_background')
 
 
 def rk4_step(f, t, y, h):
