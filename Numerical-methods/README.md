@@ -2,17 +2,22 @@
 
 ## Overview
 
-This project explores the numerical methods used to solve the equations of motion in orbital mechanics, with a focus on numerical integration using Euler's method and the Fourth-Order Runge-Kutta (RK4) method.
+This project explores numerical methods used to solve the equations of motion in orbital mechanics, focusing on Euler's method and the Fourth-Order Runge-Kutta (RK4) method.
 
-The objective is to understand how a spacecraft's position and velocity can be predicted over time by numerically solving its equations of motion.
+The objective is to understand how a spacecraft's position and velocity can be predicted over time by numerically integrating its equations of motion.
 
 The concepts and implementations are studied using [Astrodynamics with Python (AWP)](https://github.com/alfonsogonzalez/AWP) by Alfonso Gonzalez.
+
+---
 
 ## 1. Equations of Motion
 
 The motion of a spacecraft orbiting a central body can be described using its position and velocity vectors.
 
-A Cartesian state vector contains six components:
+### Cartesian State Vector
+
+A spacecraft's instantaneous state is represented by six Cartesian components:
+
 $$
 \mathbf{X} =
 \begin{bmatrix}
@@ -24,22 +29,23 @@ v_y \\
 v_z
 \end{bmatrix}
 $$
+
 Where:
 
-- \(x,y,z\): Position components.
-- \(v_x,v_y,v_z\): Velocity components.
+- $x, y, z$ are the position components.
+- $v_x, v_y, v_z$ are the velocity components.
 
 The velocity is the first derivative of position with respect to time:
 
 $$
-\mathbf{v}=\frac{d\mathbf{r}}{dt}
+\mathbf{v} = \frac{d\mathbf{r}}{dt}
 $$
 
 Acceleration is the derivative of velocity, or the second derivative of position:
 
 $$
-\mathbf{a}=\frac{d\mathbf{v}}{dt}
-=\frac{d^2\mathbf{r}}{dt^2}
+\mathbf{a} = \frac{d\mathbf{v}}{dt}
+= \frac{d^2\mathbf{r}}{dt^2}
 $$
 
 ### Two-Body Equation of Motion
@@ -47,46 +53,47 @@ $$
 Under the two-body gravitational model, the spacecraft's acceleration is:
 
 $$
-\boxed{
-\mathbf{a}=-\frac{\mu}{r^3}\mathbf{r}
-}
+\mathbf{a} = -\frac{\mu}{r^3}\mathbf{r}
 $$
 
 Where:
 
 - $\mu = GM$ is the gravitational parameter of the central body.
-- $r = \|\mathbf{r}\|$ is the distance between the spacecraft and the central body (the magnitude of the position vector).
+- $r = \|\mathbf{r}\|$ is the distance between the spacecraft and the central body.
 - The negative sign indicates that gravitational acceleration acts towards the central body, opposite to the position vector.
+
 Therefore, the equation of motion is:
 
 $$
 \boxed{
 \frac{d^2\mathbf{r}}{dt^2}
-+\frac{\mu}{r^3}\mathbf{r}=0
+= -\frac{\mu}{r^3}\mathbf{r}
 }
 $$
 
+---
+
 ## 2. Converting the Equation into First-Order ODEs
 
-Numerical integration methods are commonly formulated to solve first-order ordinary differential equations.
+Numerical integration methods are commonly formulated to solve first-order ordinary differential equations (ODEs).
 
 The second-order equation of motion can be rewritten as two coupled first-order equations:
 
 $$
-\frac{d\mathbf{r}}{dt}=\mathbf{v}
+\frac{d\mathbf{r}}{dt} = \mathbf{v}
 $$
 
 $$
 \frac{d\mathbf{v}}{dt}
-=-\frac{\mu}{r^3}\mathbf{r}
+= -\frac{\mu}{r^3}\mathbf{r}
 $$
 
 Combining position and velocity into a single state vector:
 
 $$
-\mathbf{X}=
+\mathbf{X} =
 \begin{bmatrix}
-\mathbf{r}\\
+\mathbf{r} \\
 \mathbf{v}
 \end{bmatrix}
 $$
@@ -94,23 +101,23 @@ $$
 The system becomes:
 
 $$
-\boxed{
 \frac{d\mathbf{X}}{dt}
 =
 \begin{bmatrix}
-\mathbf{v}\\
+\mathbf{v} \\
 -\dfrac{\mu}{r^3}\mathbf{r}
 \end{bmatrix}
-}
 $$
 
 This can be expressed in the general form:
 
 $$
-\frac{d\mathbf{X}}{dt}=F(t,\mathbf{X})
+\frac{d\mathbf{X}}{dt} = F(t,\mathbf{X})
 $$
 
 The objective of an ODE solver is to numerically estimate the spacecraft's state at successive time steps.
+
+---
 
 ## 3. Numerical Integration Methods
 
@@ -125,22 +132,20 @@ Euler's method is a first-order numerical integration technique.
 For a differential equation:
 
 $$
-\frac{dy}{dt}=f(t,y)
+\frac{dy}{dt} = f(t,y)
 $$
 
 The next value is estimated using:
 
 $$
-\boxed{
-y_{n+1}=y_n+h f(t_n,y_n)
-}
+y_{n+1} = y_n + h f(t_n,y_n)
 $$
 
 Where:
 
-- \(y_n\): Current value.
-- \(h\): Integration time step.
-- \(f(t_n,y_n)\): Slope at the current point.
+- $y_n$ is the current value.
+- $h$ is the integration time step.
+- $f(t_n,y_n)$ is the slope at the current point.
 
 Euler's method uses the current slope to predict the next value.
 
@@ -149,7 +154,7 @@ For orbital propagation:
 $$
 \mathbf{X}_{n+1}
 =
-\mathbf{X}_n+hF(t_n,\mathbf{X}_n)
+\mathbf{X}_n + hF(t_n,\mathbf{X}_n)
 $$
 
 Its simplicity makes it useful for understanding numerical integration, although its accuracy is limited by its first-order nature.
@@ -161,7 +166,7 @@ The Fourth-Order Runge-Kutta method improves the estimate by evaluating the slop
 For:
 
 $$
-\frac{dy}{dt}=f(t,y)
+\frac{dy}{dt} = f(t,y)
 $$
 
 The four slope evaluations are:
@@ -169,52 +174,50 @@ The four slope evaluations are:
 **Initial slope:**
 
 $$
-k_1=f(t_n,y_n)
+k_1 = f(t_n,y_n)
 $$
 
 **First midpoint slope:**
 
 $$
-k_2=f\left(t_n+\frac{h}{2},
-y_n+\frac{hk_1}{2}\right)
+k_2 = f\left(t_n+\frac{h}{2},y_n+\frac{hk_1}{2}\right)
 $$
 
 **Second midpoint slope:**
 
 $$
-k_3=f\left(t_n+\frac{h}{2},
-y_n+\frac{hk_2}{2}\right)
+k_3 = f\left(t_n+\frac{h}{2},y_n+\frac{hk_2}{2}\right)
 $$
 
 **Endpoint slope:**
 
 $$
-k_4=f(t_n+h,y_n+hk_3)
+k_4 = f(t_n+h,y_n+hk_3)
 $$
 
 The next value is calculated using a weighted average:
 
 $$
-\boxed{
-y_{n+1}=y_n+
-\frac{h}{6}(k_1+2k_2+2k_3+k_4)
-}
+y_{n+1}
+=
+y_n + \frac{h}{6}(k_1+2k_2+2k_3+k_4)
 $$
 
 For orbital propagation, the same method is applied to the complete state vector:
 
 $$
-\boxed{
 \mathbf{X}_{n+1}
 =
-\mathbf{X}_n+
+\mathbf{X}_n
++
 \frac{h}{6}(K_1+2K_2+2K_3+K_4)
-}
 $$
 
-Each \(K_i\) represents an evaluation of the derivative of the spacecraft's state.
+Each $K_i$ represents an evaluation of the derivative of the spacecraft's complete state vector.
 
 RK4 is a fourth-order method and generally provides greater accuracy than Euler's method for smooth problems at comparable step sizes.
+
+---
 
 ## 4. How Numerical Methods Propagate an Orbit
 
@@ -231,6 +234,8 @@ The numerical propagation process follows these steps:
 The output is a time history of the spacecraft's position and velocity.
 
 This information can subsequently be used to reconstruct and analyse its orbital trajectory.
+
+---
 
 ## 5. Implementation Using Python
 
@@ -260,9 +265,9 @@ def two_body_ode(t, state, mu=pd.earth['mu']):
 The function receives the spacecraft's six-dimensional state vector and returns its derivatives:
 
 $$
-F(t,\mathbf{X})=
+F(t,\mathbf{X}) =
 \begin{bmatrix}
-\mathbf{v}\\
+\mathbf{v} \\
 \mathbf{a}
 \end{bmatrix}
 $$
@@ -294,6 +299,8 @@ The numerical method can be selected independently of the equations of motion.
 
 This separation allows different integration algorithms to be used with the same physical model.
 
+---
+
 ## 6. Key Takeaways
 
 - A spacecraft's instantaneous Cartesian state is described by three position and three velocity components.
@@ -306,8 +313,28 @@ This separation allows different integration algorithms to be used with the same
 
 ---
 
-**References**
+## References
 
-- [Astrodynamics with Python (AWP) – Alfonso Gonzalez](https://github.com/alfonsogonzalez/AWP)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+- [Astrodynamics with Python (AWP) - Alfonso Gonzalez](https://github.com/alfonsogonzalez/AWP)
 - [AWP YouTube Channel](https://www.youtube.com/c/AlfonsoGonzalezSpaceEngineering)
 - Numerical methods and ordinary differential equations.
